@@ -2,905 +2,577 @@
 <html lang="lo">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>ລະບົບເກັບເອກະສານ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ຄັງເອກະສານ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Lao:wght@500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Lao:wght@500;600;700&family=Noto+Sans+Lao:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #F4EFE3;
-    --paper-card: #FCFAF3;
-    --ink: #1C2B45;
-    --ink-soft: #4A5B78;
-    --brass: #8A6D3B;
-    --hairline: rgba(28,43,69,0.14);
-    --hairline-strong: rgba(28,43,69,0.28);
-
-    --c-word: #2B579A; --c-word-bg: #E7EEF8;
-    --c-excel: #1D8348; --c-excel-bg: #E4F3EA;
-    --c-ppt: #C1440E; --c-ppt-bg: #FBE8DE;
-    --c-pdf: #B02E2E; --c-pdf-bg: #F8E4E3;
-    --c-img: #6C3D8F; --c-img-bg: #EDE3F3;
-    --c-other: #5B6B79; --c-other-bg: #E7EBEE;
-
-    --font-display: "Noto Serif Lao", "Noto Serif", serif;
-    --font-body: "Noto Sans Lao", "Noto Sans", sans-serif;
-    --font-mono: "JetBrains Mono", "Courier New", monospace;
-
+    --paper: #E8E1CC;
+    --card: #FBF8F0;
+    --ink: #2B2620;
+    --ink-soft: #6B6255;
+    --line: #D3C9AE;
+    --stamp: #B03B2A;
+    --stamp-soft: #F1DAD3;
+    --tab-blue: #34546B;
+    --tab-blue-soft: #D8E4EA;
+    --tab-grey: #5B5648;
+    --tab-grey-soft: #E4E0D2;
+    --gold: #A87C2A;
     --radius: 3px;
-    --shadow-card: 0 1px 2px rgba(28,43,69,0.06), 0 1px 0 rgba(28,43,69,0.04);
   }
-
-  *{ box-sizing: border-box; }
-  html,body{ margin:0; padding:0; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
   body{
-    background: var(--paper);
-    background-image: linear-gradient(var(--hairline) 1px, transparent 1px);
-    background-size: 100% 32px;
-    color: var(--ink);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(43,38,32,0.06) 1px, transparent 0);
+    background-size: 14px 14px;
+    color:var(--ink);
+    font-family:'Noto Sans Lao','Noto Sans',sans-serif;
+    min-height:100vh;
+    padding-bottom:40px;
   }
-  a{ color: inherit; }
-  button{ font-family: inherit; }
-  :focus-visible{ outline: 2px solid var(--ink); outline-offset: 2px; }
+  .wrap{max-width:920px;margin:0 auto;padding:0 16px;}
 
-  .shell{ display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
-
-  .sidebar{
-    background: var(--ink); color: #F4EFE3; padding: 22px 0;
-    display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  header{
+    padding:28px 16px 18px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:20px;
+    position:relative;
   }
-  .brand{ padding: 0 20px 18px 20px; border-bottom: 1px solid rgba(244,239,227,0.14); margin-bottom: 14px; }
-  .brand-mark{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: #C9A45C; text-transform: uppercase; }
-  .brand-title{ font-family: var(--font-display); font-size: 21px; font-weight: 700; margin-top: 6px; line-height: 1.25; }
-  .brand-sub{ font-size: 12.5px; color: rgba(244,239,227,0.6); margin-top: 3px; }
-
-  .cat-list{ list-style: none; margin: 0; padding: 0 10px; display: flex; flex-direction: column; gap: 2px; }
-  .cat-item{ display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; text-align: left; color: rgba(244,239,227,0.82); padding: 9px 10px; border-radius: var(--radius); cursor: pointer; font-size: 14.5px; font-family: var(--font-body); position: relative; }
-  .cat-item:hover{ background: rgba(244,239,227,0.08); }
-  .cat-item.active{ background: rgba(244,239,227,0.14); color: #fff; }
-  .cat-item.active::before{ content: ""; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 3px; background: #C9A45C; border-radius: 2px; }
-  .cat-tab{ width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-  .cat-count{ margin-left: auto; font-family: var(--font-mono); font-size: 11.5px; color: rgba(244,239,227,0.5); }
-
-  .sidebar-foot{ margin-top: auto; padding: 14px 20px 0 20px; border-top: 1px solid rgba(244,239,227,0.14); display: flex; flex-direction: column; gap: 8px; }
-  .foot-btn{ background: none; border: 1px solid rgba(244,239,227,0.25); color: rgba(244,239,227,0.85); padding: 8px 10px; border-radius: var(--radius); font-size: 12.5px; cursor: pointer; text-align: left; }
-  .foot-btn:hover{ border-color: rgba(244,239,227,0.55); }
-
-  .main{ padding: 26px 34px 60px 34px; max-width: 1160px; }
-
-  .config-banner{
-    display: none;
-    background: #FBE8DE; border: 1px solid #C1440E; color: #7A2C0B;
-    padding: 12px 16px; border-radius: var(--radius); font-size: 13.5px; margin-bottom: 18px;
-    line-height: 1.6;
+  header .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    color:var(--stamp);
+    text-transform:uppercase;
+    margin-bottom:6px;
   }
-  .config-banner.show{ display: block; }
-  .config-banner code{ background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-family: var(--font-mono); font-size: 12px; }
+  header h1{
+    font-family:'Noto Serif Lao',serif;
+    font-weight:700;
+    font-size:32px;
+    margin:0 0 4px;
+    letter-spacing:0.01em;
+  }
+  header .sub{
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  header .count-badge{
+    position:absolute;
+    top:26px; right:16px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    border:1px solid var(--ink);
+    border-radius:20px;
+    padding:5px 12px;
+    background:var(--card);
+  }
 
-  .topbar{ display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
-  .page-title{ font-family: var(--font-display); font-size: 26px; font-weight: 700; margin: 0; }
-  .page-eyebrow{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass); margin-bottom: 4px; }
+  .toolbar{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .search-box{
+    flex:1 1 200px;
+    position:relative;
+  }
+  .search-box input{
+    width:100%;
+    padding:11px 14px 11px 36px;
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    background:var(--card);
+    font-family:'Noto Sans Lao',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    outline:none;
+  }
+  .search-box input:focus{border-color:var(--stamp);}
+  .search-box::before{
+    content:"⌕";
+    position:absolute;
+    left:12px; top:50%;
+    transform:translateY(-50%);
+    font-size:16px;
+    color:var(--ink-soft);
+  }
+  .chip-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:9px 13px;
+    border:1.5px solid var(--ink);
+    border-radius:20px;
+    background:var(--card);
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+  }
+  .chip.active{
+    background:var(--ink);
+    color:var(--card);
+  }
 
-  .btn{ display: inline-flex; align-items: center; gap: 8px; border-radius: var(--radius); border: 1px solid transparent; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); }
-  .btn:disabled{ opacity: 0.5; cursor: not-allowed; }
-  .btn-primary{ background: var(--ink); color: #F4EFE3; }
-  .btn-primary:hover{ background: #14213A; }
-  .btn-ghost{ background: transparent; border-color: var(--hairline-strong); color: var(--ink); }
-  .btn-ghost:hover{ background: rgba(28,43,69,0.05); }
+  .actions-row{
+    display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap;
+  }
+  .btn{
+    font-family:'Noto Sans Lao',sans-serif;
+    font-size:13px;
+    padding:9px 14px;
+    border-radius:var(--radius);
+    border:1.5px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .btn:hover{background:var(--ink); color:var(--card);}
+  .btn.primary{background:var(--stamp); border-color:var(--stamp); color:#fff;}
+  .btn.primary:hover{background:#8f2f21;}
+  input[type=file]{display:none;}
 
-  .stats{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--hairline-strong); border: 1px solid var(--hairline-strong); margin-bottom: 22px; }
-  .stat{ background: var(--paper-card); padding: 14px 16px; }
-  .stat-num{ font-family: var(--font-mono); font-size: 22px; font-weight: 600; }
-  .stat-label{ font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  @media(min-width:640px){
+    .grid{grid-template-columns:1fr 1fr;}
+  }
+  @media(min-width:960px){
+    .grid{grid-template-columns:1fr 1fr 1fr;}
+  }
 
-  .toolbar{ display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
-  .search-wrap{ flex: 1; min-width: 220px; position: relative; }
-  .search-wrap input{ width: 100%; padding: 10px 12px 10px 34px; border: 1px solid var(--hairline-strong); background: var(--paper-card); border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; color: var(--ink); }
-  .search-wrap svg{ position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
-  .sort-select{ border: 1px solid var(--hairline-strong); background: var(--paper-card); border-radius: var(--radius); padding: 10px 10px; font-size: 13.5px; color: var(--ink); font-family: var(--font-body); }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 16px 14px;
+    position:relative;
+    box-shadow:1px 2px 0 rgba(43,38,32,0.06);
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .card:active{transform:translateY(1px);}
+  .card::before{
+    content:"";
+    position:absolute;
+    top:14px; left:-1px;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1px solid var(--line);
+    box-shadow: 0 22px 0 0 var(--paper);
+  }
+  .card-top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:8px;
+    margin-bottom:10px;
+    padding-left:8px;
+  }
+  .code{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.03em;
+  }
+  .cat-tab{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    padding:3px 8px;
+    border-radius:12px;
+    white-space:nowrap;
+  }
+  .cat-pdf{background:var(--stamp-soft); color:var(--stamp);}
+  .cat-other{background:var(--tab-blue-soft); color:var(--tab-blue);}
+  .cat-doc,.cat-docx{background:var(--tab-blue-soft); color:var(--tab-blue);}
+  .cat-xlsx,.cat-xls{background:#DCE7D6; color:#3E6B33;}
+  .cat-image,.cat-img{background:#EEDFC4; color:var(--gold);}
+  .cat-default{background:var(--tab-grey-soft); color:var(--tab-grey);}
 
-  .cat-rail{ display: none; }
+  .name{
+    font-family:'Noto Serif Lao',serif;
+    font-weight:600;
+    font-size:16.5px;
+    line-height:1.4;
+    padding-left:8px;
+    margin-bottom:8px;
+    word-break:break-word;
+  }
+  .desc{
+    font-size:13px;
+    color:var(--ink-soft);
+    padding-left:8px;
+    margin-bottom:10px;
+    line-height:1.5;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .meta-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-left:8px;
+    padding-top:10px;
+    border-top:1px dashed var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .dept-tag{
+    font-size:11px;
+    padding-left:8px;
+    margin-top:6px;
+    color:var(--tab-blue);
+  }
+  .dept-tag::before{content:"◆ ";font-size:9px;}
 
-  .grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-soft);
+  }
+  .empty .big{font-size:38px; margin-bottom:10px;}
 
-  .card{ background: var(--paper-card); border: 1px solid var(--hairline); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 0; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; transition: transform .12s ease, box-shadow .12s ease; }
-  .card:hover{ transform: translateY(-2px); box-shadow: 0 6px 16px rgba(28,43,69,0.12); }
-  .card-tab{ height: 6px; width: 100%; }
-  .card-body{ padding: 14px 14px 12px 14px; flex: 1; display:flex; flex-direction:column; }
-  .card-top{ display:flex; align-items:flex-start; justify-content:space-between; gap: 8px; }
-  .card-code{ font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-soft); letter-spacing: 0.03em; }
-  .card-badge{ font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; letter-spacing: 0.02em; white-space: nowrap; }
-  .card-name{ font-family: var(--font-body); font-weight: 600; font-size: 15px; margin: 8px 0 4px 0; line-height: 1.35; word-break: break-word; }
-  .card-desc{ font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px; min-height: 18px; }
-  .card-meta{ margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--ink-soft); border-top: 1px dashed var(--hairline-strong); padding-top: 8px; }
-  .card-dept{ font-family: var(--font-mono); }
-
-  .empty{ grid-column: 1 / -1; text-align: center; padding: 70px 20px; border: 1px dashed var(--hairline-strong); border-radius: var(--radius); background: var(--paper-card); }
-  .empty-title{ font-family: var(--font-display); font-size: 19px; font-weight: 700; margin-bottom: 6px; }
-  .empty-sub{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 16px; }
-
-  .overlay{ position: fixed; inset: 0; background: rgba(20,28,45,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
-  .overlay.show{ display: flex; }
-  .modal{ background: var(--paper-card); border-radius: var(--radius); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(20,28,45,0.35); }
-  .modal-head{ display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--hairline); position: sticky; top: 0; background: var(--paper-card); }
-  .modal-title{ font-family: var(--font-display); font-size: 18px; font-weight: 700; }
-  .modal-close{ background: none; border: none; cursor: pointer; font-size: 20px; color: var(--ink-soft); line-height:1; padding: 4px; }
-  .modal-body{ padding: 20px; }
-
-  .field{ margin-bottom: 14px; }
-  .field label{ display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 5px; color: var(--ink); }
-  .field input[type=text], .field textarea, .field select{ width: 100%; padding: 9px 11px; border: 1px solid var(--hairline-strong); border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; background: #fff; color: var(--ink); }
-  .field textarea{ resize: vertical; min-height: 64px; }
-  .field-row{ display: flex; gap: 10px; }
-  .field-row .field{ flex:1; }
-
-  .drop{ border: 1.5px dashed var(--hairline-strong); border-radius: var(--radius); padding: 22px 14px; text-align: center; cursor: pointer; background: rgba(28,43,69,0.02); }
-  .drop:hover{ background: rgba(28,43,69,0.05); }
-  .drop input{ display: none; }
-  .drop-title{ font-weight: 600; font-size: 13.5px; margin-bottom: 3px; }
-  .drop-sub{ font-size: 12px; color: var(--ink-soft); }
-  .file-chip-list{ margin-top: 10px; display:flex; flex-direction:column; gap:6px; }
-  .file-chip{ display:flex; align-items:center; justify-content:space-between; font-size: 12.5px; padding: 6px 10px; background: #fff; border: 1px solid var(--hairline); border-radius: var(--radius); }
-  .file-chip button{ background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:14px; }
-
-  .modal-actions{ display: flex; gap: 10px; justify-content: flex-end; padding-top: 6px; margin-top: 6px; }
-
-  .preview-box{ background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--radius); padding: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; min-height: 140px; }
-  .preview-box img{ max-width: 100%; max-height: 240px; border-radius: 2px; }
-  .preview-icon{ font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); text-align:center; }
-  .preview-icon .glyph{ font-size: 40px; display:block; margin-bottom: 8px; }
-
-  .detail-row{ display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--hairline); font-size: 13.5px; }
-  .detail-row:last-child{ border-bottom: none; }
-  .detail-label{ color: var(--ink-soft); }
-  .detail-val{ font-weight: 600; text-align: right; max-width: 60%; word-break: break-word; }
-  .tag-pills{ display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
-  .tag-pill{ background: rgba(28,43,69,0.07); padding: 2px 8px; border-radius: 20px; font-size: 11.5px; }
-
-  .toast{ position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #F4EFE3; padding: 10px 18px; border-radius: var(--radius); font-size: 13.5px; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.25); max-width: 88vw; text-align:center; }
-  .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-4px); }
-
-  .fab{ display: none; }
-
-  /* ---------- Auth screen ---------- */
-  .auth-wrap{ position: fixed; inset: 0; background: var(--paper); background-image: linear-gradient(var(--hairline) 1px, transparent 1px); background-size: 100% 32px; display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 200; }
-  .auth-wrap.hide{ display: none; }
-  .auth-card{ background: var(--paper-card); border: 1px solid var(--hairline-strong); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(20,28,45,0.18); width: 100%; max-width: 380px; padding: 28px 26px 24px 26px; }
-  .auth-mark{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--brass); text-transform: uppercase; text-align: center; }
-  .auth-title{ font-family: var(--font-display); font-size: 22px; font-weight: 700; text-align: center; margin: 6px 0 20px 0; }
-  .auth-tabs{ display: flex; border: 1px solid var(--hairline-strong); border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; }
-  .auth-tab{ flex: 1; background: var(--paper); border: none; padding: 9px 0; font-size: 13.5px; font-weight: 600; font-family: var(--font-body); color: var(--ink-soft); cursor: pointer; }
-  .auth-tab.active{ background: var(--ink); color: #F4EFE3; }
-  .auth-err{ display: none; background: #FBE8DE; border: 1px solid #C1440E; color: #7A2C0B; padding: 9px 12px; border-radius: var(--radius); font-size: 12.5px; margin-bottom: 14px; line-height: 1.5; }
-  .auth-err.show{ display: block; }
-  .auth-hint{ font-size: 11.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 14px; line-height: 1.5; }
-  .user-badge{ font-size: 12.5px; color: rgba(244,239,227,0.75); padding: 8px 10px; border: 1px solid rgba(244,239,227,0.2); border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .user-badge b{ color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  @media (max-width: 860px){
-    .shell{ grid-template-columns: 1fr; }
-    .sidebar{ display: none; }
-    .main{ padding: 18px 16px 90px 16px; }
-    .cat-rail{ display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; -webkit-overflow-scrolling: touch; }
-    .cat-rail::-webkit-scrollbar{ display: none; }
-    .cat-chip{ flex-shrink: 0; display: flex; align-items:center; gap: 6px; padding: 7px 12px; border-radius: 20px; border: 1px solid var(--hairline-strong); background: var(--paper-card); font-size: 12.5px; cursor: pointer; color: var(--ink); }
-    .cat-chip.active{ background: var(--ink); color: #F4EFE3; border-color: var(--ink); }
-    .cat-chip .cat-tab{ width: 8px; height: 8px; }
-    .topbar .btn-primary.desktop-only{ display: none; }
-    .page-title{ font-size: 21px; }
-    .fab{ display: flex; position: fixed; right: 18px; bottom: 22px; width: 54px; height: 54px; border-radius: 50%; background: var(--ink); color: #F4EFE3; align-items: center; justify-content: center; font-size: 26px; border: none; box-shadow: 0 8px 20px rgba(28,43,69,0.4); z-index: 40; cursor: pointer; }
-    .stats{ grid-template-columns: repeat(2,1fr); }
-    .field-row{ flex-direction: column; gap: 0; }
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(43,38,32,0.55);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:50;
+  }
+  .overlay.show{display:flex;}
+  @media(min-width:640px){
+    .overlay{align-items:center;}
+  }
+  .modal{
+    background:var(--card);
+    width:100%;
+    max-width:520px;
+    border-radius:12px 12px 0 0;
+    padding:24px 20px 28px;
+    max-height:85vh;
+    overflow-y:auto;
+    border-top:3px solid var(--stamp);
+  }
+  @media(min-width:640px){
+    .modal{border-radius:6px; border-top:3px solid var(--stamp);}
+  }
+  .modal .m-code{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--stamp);
+    margin-bottom:6px;
+  }
+  .modal h2{
+    font-family:'Noto Serif Lao',serif;
+    font-size:22px;
+    margin:0 0 14px;
+    line-height:1.4;
+  }
+  .m-field{margin-bottom:14px;}
+  .m-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .m-value{font-size:14px; line-height:1.6;}
+  .m-close{
+    position:sticky; top:0; float:right;
+    background:none; border:none; font-size:22px;
+    color:var(--ink-soft); cursor:pointer; line-height:1;
+  }
+  .filepath-box{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:var(--paper);
+    padding:8px 10px;
+    border-radius:4px;
+    word-break:break-all;
+    color:var(--ink-soft);
   }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">ລະບົບຄຸ້ມຄອງເອກະສານ</div>
+    <h1>ຄັງເອກະສານ</h1>
+    <div class="sub">ຄົ້ນຫາ ແລະ ເບິ່ງລາຍລະອຽດເອກະສານທັງໝົດ</div>
+    <div class="count-badge" id="countBadge">0 ລາຍການ</div>
+  </header>
 
-<div class="auth-wrap" id="authWrap">
-  <div class="auth-card">
-    <div class="auth-mark">FILE. № 001</div>
-    <div class="auth-title">ຄັງເອກະສານ</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" type="button">ເຂົ້າສູ່ລະບົບ</button>
-      <button class="auth-tab" id="tabRegister" type="button">ລົງທະບຽນ</button>
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="ຄົ້ນຫາ ຊື່, ລະຫັດ, ພະແນກ, ແທັກ...">
     </div>
-    <div class="auth-err" id="authErr"></div>
-    <div class="field">
-      <label>ຊື່ຜູ້ໃຊ້</label>
-      <input type="text" id="authUser" autocomplete="username" placeholder="ຕົວຢ່າງ: somchai">
-    </div>
-    <div class="field">
-      <label>ລະຫັດຜ່ານ</label>
-      <input type="password" id="authPass" autocomplete="current-password" placeholder="ຢ່າງໜ້ອຍ 6 ໂຕອັກສອນ">
-    </div>
-    <div class="field" id="authPass2Wrap" style="display:none;">
-      <label>ຢືນຢັນລະຫັດຜ່ານ</label>
-      <input type="password" id="authPass2" autocomplete="new-password" placeholder="ພິມລະຫັດຜ່ານອີກຄັ້ງ">
-    </div>
-    <div class="auth-hint" id="authHint">ຍັງບໍ່ມີບັນຊີ? ກົດ "ລົງທະບຽນ" ດ້ານເທິງເພື່ອສ້າງບັນຊີໃໝ່.</div>
-    <button class="btn btn-primary" id="authSubmit" style="width:100%; justify-content:center;">ເຂົ້າສູ່ລະບົບ</button>
+  </div>
+  <div class="chip-row" id="chipRow"></div>
+
+  <div class="actions-row">
+    <button class="btn" id="importBtn">⇧ ນຳເຂົ້າ JSON</button>
+    <button class="btn" id="exportBtn">⇩ ສົ່ງອອກ JSON</button>
+    <input type="file" id="fileInput" accept="application/json">
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyState" style="display:none;">
+    <div class="big">🗂</div>
+    ບໍ່ພົບເອກະສານທີ່ຄົ້ນຫາ
   </div>
 </div>
 
-<div class="shell hide" id="shellRoot" style="display:none;">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">FILE. № 001</div>
-      <div class="brand-title">ຄັງເອກະສານ</div>
-      <div class="brand-sub">ເຊື່ອມຕໍ່ Supabase</div>
-    </div>
-    <ul class="cat-list" id="catList"></ul>
-    <div class="sidebar-foot">
-      <div class="user-badge"><b id="userBadgeName">—</b><button class="foot-btn" id="logoutBtn" style="border:none;padding:2px 6px;">ອອກ</button></div>
-      <button class="foot-btn" id="exportBtnSide">⬇ ສົ່ງອອກຂໍ້ມູນ (Backup)</button>
-      <button class="foot-btn" id="importBtnSide">⬆ ນຳເຂົ້າຈາກ Backup ເກົ່າ</button>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <div>
-        <div class="page-eyebrow" id="catEyebrow">ໝວດໝູ່: ທັງໝົດ</div>
-        <h1 class="page-title" id="pageTitle">ເອກະສານທັງໝົດ</h1>
-      </div>
-      <button class="btn btn-primary desktop-only" id="addBtn"><span>+</span> ເພີ່ມເອກະສານ</button>
-    </div>
-
-    <div class="config-banner" id="configBanner">
-      ⚠ ຍັງບໍ່ໄດ້ຕັ້ງຄ່າ Supabase — ກະລຸນາເປີດໄຟລ໌ນີ້ດ້ວຍໂປຣແກຣມແກ້ໄຂຂໍ້ຄວາມ ແລ້ວແທນທີ່ຄ່າ <code>SUPABASE_URL</code> ແລະ <code>SUPABASE_ANON_KEY</code> ໃນສ່ວນຕົ້ນຂອງ <code>&lt;script&gt;</code> ດ້ວຍຄ່າຈິງຈາກໂປຣເຈັກ Supabase ຂອງທ່ານ.
-    </div>
-
-    <div class="stats" id="statsRow"></div>
-
-    <div class="cat-rail" id="catRail"></div>
-
-    <div class="toolbar">
-      <div class="search-wrap">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="ຄົ້ນຫາຊື່ເອກະສານ, ພະແນກ, ຫຼື ແທັກ...">
-      </div>
-      <select class="sort-select" id="sortSelect">
-        <option value="new">ໃໝ່ສຸດ ກ່ອນ</option>
-        <option value="old">ເກົ່າສຸດ ກ່ອນ</option>
-        <option value="name">ຊື່ (ກ-ຮ)</option>
-      </select>
-    </div>
-
-    <div class="grid" id="grid"></div>
-  </main>
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBody"></div>
 </div>
-
-<button class="fab" id="fabAdd">+</button>
-<input type="file" id="importFile" accept="application/json" style="display:none">
-
-<div class="overlay" id="formOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="formTitle">ເພີ່ມເອກະສານໃໝ່</div>
-      <button class="modal-close" id="formClose">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="field">
-        <label>ເລືອກໄຟລ໌</label>
-        <div class="drop" id="dropZone">
-          <div class="drop-title">ກົດ ຫຼື ລາກໄຟລ໌ມາວາງບ່ອນນີ້</div>
-          <div class="drop-sub">ໄຟລ໌ຈະຖືກອັບໂຫລດໄປ Supabase Storage</div>
-          <input type="file" id="fileInput" multiple>
-        </div>
-        <div class="file-chip-list" id="fileChipList"></div>
-      </div>
-      <div class="field">
-        <label>ຊື່ເອກະສານ *</label>
-        <input type="text" id="fName" placeholder="ຕົວຢ່າງ: ບົດລາຍງານປະຈຳເດືອນ">
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>ໝວດໝູ່</label>
-          <select id="fCategory">
-            <option value="word">Word</option>
-            <option value="excel">Excel</option>
-            <option value="ppt">PowerPoint</option>
-            <option value="pdf">PDF</option>
-            <option value="image">ຮູບພາບ</option>
-            <option value="other">ອື່ນໆ</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>ພະແນກ / ຜູ້ຮັບຜິດຊອບ</label>
-          <input type="text" id="fDept" placeholder="ຕົວຢ່າງ: ພະແນກບຸກຄະລາກອນ">
-        </div>
-      </div>
-      <div class="field">
-        <label>ລາຍລະອຽດ</label>
-        <textarea id="fDesc" placeholder="ບັນທຶກສັ້ນໆກ່ຽວກັບເອກະສານນີ້"></textarea>
-      </div>
-      <div class="field">
-        <label>ແທັກ (ຄັ່ນດ້ວຍເຄື່ອງໝາຍຈຸດ , )</label>
-        <input type="text" id="fTags" placeholder="ຕົວຢ່າງ: ການເງິນ, 2026, ດ່ວນ">
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" id="formCancel">ຍົກເລີກ</button>
-        <button class="btn btn-primary" id="formSave">ບັນທຶກ</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="viewOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title">ລາຍລະອຽດເອກະສານ</div>
-      <button class="modal-close" id="viewClose">✕</button>
-    </div>
-    <div class="modal-body" id="viewBody"></div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-(function(){
-  "use strict";
+/*__DEFAULT_DATA_START__*/
+const DEFAULT_DATA = {
+  "documents": [
+    {
+      "id": "17338e5e-71a8-4a17-a3ad-4ac24d5e3850",
+      "code": "DOC-2026-0003",
+      "name": "ເອກະສານສຳມະໂນຄົວ",
+      "category": "pdf",
+      "ext": "pdf",
+      "size": 854501,
+      "dateISO": "2026-07-14T08:46:40.937591+00:00",
+      "dept": "",
+      "desc": "",
+      "tags": [],
+      "filePath": "c28c5cfe-269d-4d3f-a9c9-1e9302f66c20-________________.pdf"
+    },
+    {
+      "id": "78cbbf6b-96c4-4d96-b58c-ca2fa391ac04",
+      "code": "DOC-2026-0002",
+      "name": "VAT_Input_and_Output_Simplified",
+      "category": "pdf",
+      "ext": "pdf",
+      "size": 6103196,
+      "dateISO": "2026-07-14T08:14:18.024542+00:00",
+      "dept": "ເຄນຄຳ",
+      "desc": "ບົດຮຽນກ່ຽວກັບ ອາກອນມູນຄ່າເພີ່ມ",
+      "tags": [],
+      "filePath": "a4f7466f-f67f-48a5-811d-7087e38bd251-VAT_Input_and_Output_Simplified.pdf"
+    },
+    {
+      "id": "7601564a-40cb-400b-8fba-63ef89e150b9",
+      "code": "DOC-2026-0001",
+      "name": "index (ຟຣາຍຖານຂໍ້ມູນຄັງເອກະສານ)",
+      "category": "other",
+      "ext": "html",
+      "size": 50698,
+      "dateISO": "2026-07-14T08:09:33.003485+00:00",
+      "dept": "",
+      "desc": "ໄຟກ່ຽວກັບຄັງເອກະສານ ເປັນໄຟລ໌ html",
+      "tags": [],
+      "filePath": "01cadccd-ded1-4ade-9ebc-2f75e491cc84-index.html"
+    }
+  ]
+};
 
-  /* =========================================================
-     SUPABASE CONFIG — replace these two values with your own
-     (Project Settings → API in your Supabase dashboard)
-  ========================================================= */
-  const SUPABASE_URL = 'https://hsavypvuiqdjwuiludku.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzYXZ5cHZ1aXFkand1aWx1ZGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5OTUwOTksImV4cCI6MjA5OTU3MTA5OX0.LDMmxVQMCRjpUvl80OMoawIAmXseM04hFWHsek4465Y';
-  const BUCKET = 'documents';
-  /* ========================================================= */
+const STORAGE_KEY = "archive_viewer_data_v1";
 
-  const isConfigured = !SUPABASE_URL.includes('YOUR_') && !SUPABASE_ANON_KEY.includes('YOUR_');
-  const sb = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return DEFAULT_DATA;
+}
+function saveData(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+}
 
-  /* ຊື່ຜູ້ໃຊ້ (username) ຖືກປ່ຽນເປັນອີເມວພາຍໃນ ເພາະ Supabase Auth ຕ້ອງການອີເມວ */
-  const AUTH_EMAIL_DOMAIN = '@docstore.local';
-  function usernameToEmail(u){ return u.trim().toLowerCase().replace(/\s+/g,'') + AUTH_EMAIL_DOMAIN; }
-  function emailToUsername(e){ return (e||'').split('@')[0]; }
+let state = { data: loadData(), search: "", category: "ທັງໝົດ" };
 
-  const CATS = {
-    all:   { label: "ທັງໝົດ",     color: "var(--ink)",     bg: "transparent" },
-    word:  { label: "Word",       color: "var(--c-word)",  bg: "var(--c-word-bg)" },
-    excel: { label: "Excel",      color: "var(--c-excel)", bg: "var(--c-excel-bg)" },
-    ppt:   { label: "PowerPoint", color: "var(--c-ppt)",   bg: "var(--c-ppt-bg)" },
-    pdf:   { label: "PDF",        color: "var(--c-pdf)",   bg: "var(--c-pdf-bg)" },
-    image: { label: "ຮູບພາບ",     color: "var(--c-img)",   bg: "var(--c-img-bg)" },
-    other: { label: "ອື່ນໆ",       color: "var(--c-other)", bg: "var(--c-other-bg)" }
-  };
-  const EXT_MAP = {
-    doc:"word", docx:"word",
-    xls:"excel", xlsx:"excel", csv:"excel",
-    ppt:"ppt", pptx:"ppt",
-    pdf:"pdf",
-    jpg:"image", jpeg:"image", png:"image", gif:"image", webp:"image", svg:"image", bmp:"image"
-  };
-  const GLYPH = { word:"📄", excel:"📊", ppt:"📽️", pdf:"🗎", image:"🖼️", other:"📁" };
-
-  let documents = [];
-  let activeCat = "all";
-  let searchTerm = "";
-  let sortMode = "new";
-  let pendingFiles = [];
-  let editingId = null;
-
-  function extOf(filename){ const p = filename.split('.'); return p.length > 1 ? p.pop().toLowerCase() : ''; }
-  function catFromExt(ext){ return EXT_MAP[ext] || 'other'; }
-  function fmtDate(iso){
+function fmtSize(bytes){
+  if(bytes < 1024) return bytes + " B";
+  if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + " KB";
+  return (bytes/(1024*1024)).toFixed(2) + " MB";
+}
+function fmtDate(iso){
+  try{
     const d = new Date(iso);
     const months = ["ມ.ກ","ກ.ພ","ມ.ນ","ມ.ສ","ພ.ພ","ມິ.ຖ","ກ.ລ","ສ.ຫ","ກ.ຍ","ຕ.ລ","ພ.ຈ","ທ.ວ"];
-    return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
-  }
-  function fmtSize(bytes){
-    if(!bytes) return '-';
-    if(bytes < 1024) return bytes + " B";
-    if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + " KB";
-    return (bytes/1024/1024).toFixed(2) + " MB";
-  }
-  function nextCode(){
-    const y = new Date().getFullYear();
-    let maxN = 0;
-    documents.forEach(d => {
-      const m = /^DOC-(\d{4})-(\d+)$/.exec(d.code || '');
-      if(m && Number(m[1]) === y) maxN = Math.max(maxN, Number(m[2]));
-    });
-    const n = String(maxN + 1).padStart(4,'0');
-    return "DOC-" + y + "-" + n;
-  }
-  function escapeHtml(s){
-    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-  function showToast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(()=> t.classList.remove('show'), 2600);
-  }
-  function safeName(name){ return name.replace(/[^a-zA-Z0-9._-]/g, '_'); }
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }catch(e){ return iso; }
+}
+function catClass(cat){
+  const c = (cat||"").toLowerCase();
+  if(c==="pdf") return "cat-pdf";
+  if(c==="docx"||c==="doc") return "cat-doc";
+  if(c==="xlsx"||c==="xls") return "cat-xlsx";
+  if(c==="image"||c==="img") return "cat-image";
+  if(c==="other") return "cat-other";
+  return "cat-default";
+}
 
-  function rowToDoc(row){
-    return {
-      id: row.id, code: row.code, name: row.name, category: row.category,
-      ext: row.ext, size: row.size || 0, dateISO: row.created_at,
-      dept: row.dept, desc: row.description, tags: row.tags || [],
-      filePath: row.file_path
-    };
-  }
+function getCategories(){
+  const set = new Set(state.data.documents.map(d => d.category || "ອື່ນໆ"));
+  return ["ທັງໝົດ", ...Array.from(set)];
+}
 
-  /* Bucket ຖືກຕັ້ງເປັນ private — ຕ້ອງສ້າງ Signed URL (ໝົດອາຍຸໃນ 1 ຊົ່ວໂມງ) ທຸກຄັ້ງທີ່ຈະເປີດ/ສະແດງໄຟລ໌ ແລະ ຕ້ອງ login ຢູ່ຈຶ່ງສ້າງໄດ້ */
-  async function getSignedUrl(filePath){
-    if(!filePath || !sb) return null;
-    const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(filePath, 3600);
-    if(error) return null;
-    return data.signedUrl;
-  }
-
-  async function loadDocuments(){
-    if(!sb) return;
-    const { data, error } = await sb.from('documents').select('*').order('created_at', { ascending: false });
-    if(error){ showToast('ໂຫລດຂໍ້ມູນຜິດພາດ: ' + friendlyStorageError(error)); return; }
-    documents = data.map(rowToDoc);
-    render();
-  }
-
-  function friendlyStorageError(error){
-    const msg = (error && error.message) || '';
-    if(/bucket not found/i.test(msg)){
-      return 'ບໍ່ພົບ Storage Bucket ຊື່ "' + BUCKET + '" — ກະລຸນາເປີດ Supabase Dashboard → Storage ແລ້ວສ້າງ Bucket ຊື່ "' + BUCKET + '" (ຫຼືແລ່ນ SQL ໃນເອກະສານຄູ່ມືການຕິດຕັ້ງ).';
-    }
-    if(/row-level security|RLS|permission denied|policy/i.test(msg)){
-      return 'ບໍ່ມີສິດອະນຸຍາດ (RLS Policy) — ກະລຸນາຕັ້ງຄ່າ Policy ສຳລັບຕາຕະລາງ/Bucket ຕາມຄູ່ມືການຕິດຕັ້ງ.';
-    }
-    return msg || 'ເກີດຂໍ້ຜິດພາດທີ່ບໍ່ຮູ້ຈັກ';
-  }
-
-  async function uploadFile(file){
-    const path = crypto.randomUUID() + '-' + safeName(file.name);
-    const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: true });
-    if(error) throw new Error(friendlyStorageError(error));
-    return path;
-  }
-
-  /* ---------- Nav / stats / grid rendering ---------- */
-  function renderCatNav(){
-    const counts = { all: documents.length };
-    Object.keys(CATS).forEach(k => { if(k!=='all') counts[k] = 0; });
-    documents.forEach(d => { counts[d.category] = (counts[d.category]||0) + 1; });
-
-    const listEl = document.getElementById('catList');
-    const railEl = document.getElementById('catRail');
-    listEl.innerHTML = ''; railEl.innerHTML = '';
-
-    Object.keys(CATS).forEach(key => {
-      const cat = CATS[key];
-      const active = activeCat === key ? 'active' : '';
-      const li = document.createElement('li');
-      li.innerHTML = `<button class="cat-item ${active}" data-cat="${key}">
-          <span class="cat-tab" style="background:${cat.color}"></span>
-          <span>${cat.label}</span>
-          <span class="cat-count">${counts[key]||0}</span>
-        </button>`;
-      listEl.appendChild(li);
-
-      const chip = document.createElement('button');
-      chip.className = 'cat-chip ' + (active ? 'active' : '');
-      chip.dataset.cat = key;
-      chip.innerHTML = `<span class="cat-tab" style="background:${cat.color}"></span>${cat.label} (${counts[key]||0})`;
-      railEl.appendChild(chip);
-    });
-
-    document.querySelectorAll('[data-cat]').forEach(el => {
-      el.addEventListener('click', () => { activeCat = el.dataset.cat; render(); });
-    });
-  }
-
-  function renderStats(){
-    const total = documents.length;
-    const totalSize = documents.reduce((s,d)=> s + (d.size||0), 0);
-    const deptSet = new Set(documents.map(d=>d.dept).filter(Boolean));
-    const recent = documents.filter(d => (Date.now() - new Date(d.dateISO).getTime()) < 7*24*3600*1000).length;
-    const items = [
-      { num: total, label: "ເອກະສານທັງໝົດ" },
-      { num: fmtSize(totalSize), label: "ຂະໜາດລວມ" },
-      { num: deptSet.size, label: "ພະແນກທີ່ກ່ຽວຂ້ອງ" },
-      { num: recent, label: "ເພີ່ມພາຍໃນ 7 ມື້" }
-    ];
-    document.getElementById('statsRow').innerHTML = items.map(it => `
-      <div class="stat"><div class="stat-num">${it.num}</div><div class="stat-label">${it.label}</div></div>`).join('');
-  }
-
-  function getFiltered(){
-    let list = documents.slice();
-    if(activeCat !== 'all') list = list.filter(d => d.category === activeCat);
-    if(searchTerm){
-      const q = searchTerm.toLowerCase();
-      list = list.filter(d =>
-        d.name.toLowerCase().includes(q) ||
-        (d.dept||'').toLowerCase().includes(q) ||
-        d.tags.some(t => t.toLowerCase().includes(q)) ||
-        (d.desc||'').toLowerCase().includes(q));
-    }
-    if(sortMode === 'new') list.sort((a,b)=> new Date(b.dateISO) - new Date(a.dateISO));
-    else if(sortMode === 'old') list.sort((a,b)=> new Date(a.dateISO) - new Date(b.dateISO));
-    else if(sortMode === 'name') list.sort((a,b)=> a.name.localeCompare(b.name, 'lo'));
-    return list;
-  }
-
-  function renderGrid(){
-    const grid = document.getElementById('grid');
-    const list = getFiltered();
-    document.getElementById('pageTitle').textContent = activeCat === 'all' ? 'ເອກະສານທັງໝົດ' : CATS[activeCat].label + ' — ເອກະສານ';
-    document.getElementById('catEyebrow').textContent = 'ໝວດໝູ່: ' + CATS[activeCat].label;
-
-    if(list.length === 0){
-      grid.innerHTML = `<div class="empty">
-          <div class="empty-title">${documents.length===0 ? 'ຍັງບໍ່ມີເອກະສານ' : 'ບໍ່ພົບເອກະສານທີ່ຄົ້ນຫາ'}</div>
-          <div class="empty-sub">${documents.length===0 ? 'ເລີ່ມຕົ້ນໂດຍການເພີ່ມເອກະສານທຳອິດຂອງທ່ານ' : 'ລອງປ່ຽນຄຳຄົ້ນຫາ ຫຼື ໝວດໝູ່ອື່ນ'}</div>
-          ${documents.length===0 ? '<button class="btn btn-primary" id="emptyAddBtn">+ ເພີ່ມເອກະສານ</button>' : ''}
-        </div>`;
-      const eab = document.getElementById('emptyAddBtn');
-      if(eab) eab.addEventListener('click', openAddForm);
-      return;
-    }
-
-    grid.innerHTML = list.map(d => {
-      const cat = CATS[d.category];
-      return `<div class="card" data-id="${d.id}">
-          <div class="card-tab" style="background:${cat.color}"></div>
-          <div class="card-body">
-            <div class="card-top">
-              <span class="card-code">${d.code||''}</span>
-              <span class="card-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
-            </div>
-            <div class="card-name">${escapeHtml(d.name)}</div>
-            <div class="card-desc">${escapeHtml(d.desc || 'ບໍ່ມີລາຍລະອຽດ')}</div>
-            <div class="card-meta">
-              <span class="card-dept">${escapeHtml(d.dept || '—')}</span>
-              <span>${fmtDate(d.dateISO)}</span>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-
-    grid.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', () => openViewModal(card.dataset.id));
-    });
-  }
-
-  function render(){ renderCatNav(); renderStats(); renderGrid(); }
-
-  /* ---------- Add/Edit form ---------- */
-  function resetForm(){
-    pendingFiles = []; editingId = null;
-    document.getElementById('fName').value = '';
-    document.getElementById('fCategory').value = 'word';
-    document.getElementById('fDept').value = '';
-    document.getElementById('fDesc').value = '';
-    document.getElementById('fTags').value = '';
-    document.getElementById('fileChipList').innerHTML = '';
-    document.getElementById('fileInput').value = '';
-    document.getElementById('formTitle').textContent = 'ເພີ່ມເອກະສານໃໝ່';
-  }
-  function openAddForm(){ resetForm(); document.getElementById('formOverlay').classList.add('show'); }
-  function openEditForm(id){
-    const doc = documents.find(d=>d.id===id);
-    if(!doc) return;
-    resetForm(); editingId = id;
-    document.getElementById('formTitle').textContent = 'ແກ້ໄຂຂໍ້ມູນເອກະສານ';
-    document.getElementById('fName').value = doc.name;
-    document.getElementById('fCategory').value = doc.category;
-    document.getElementById('fDept').value = doc.dept || '';
-    document.getElementById('fDesc').value = doc.desc || '';
-    document.getElementById('fTags').value = doc.tags.join(', ');
-    document.getElementById('formOverlay').classList.add('show');
-    closeViewModal();
-  }
-  function closeForm(){ document.getElementById('formOverlay').classList.remove('show'); }
-
-  function renderFileChips(){
-    const list = document.getElementById('fileChipList');
-    list.innerHTML = pendingFiles.map((pf,i)=>`
-      <div class="file-chip"><span>${escapeHtml(pf.file.name)} · ${fmtSize(pf.file.size)}</span>
-      <button data-idx="${i}" type="button">✕</button></div>`).join('');
-    list.querySelectorAll('button').forEach(b=>{
-      b.addEventListener('click', ()=>{ pendingFiles.splice(Number(b.dataset.idx),1); renderFileChips(); });
-    });
-  }
-
-  function handleFiles(fileList){
-    Array.from(fileList).forEach(file => {
-      pendingFiles.push({ file, ext: extOf(file.name) });
-    });
-    renderFileChips();
-    if(pendingFiles.length && document.getElementById('fName').value.trim() === ''){
-      const first = pendingFiles[0];
-      document.getElementById('fName').value = first.file.name.replace(/\.[^.]+$/, '');
-      document.getElementById('fCategory').value = catFromExt(first.ext);
-    }
-  }
-
-  async function saveForm(){
-    if(!sb){ showToast('ກະລຸນາຕັ້ງຄ່າ Supabase ກ່ອນ (ເບິ່ງແຈ້ງເຕືອນດ້ານເທິງ)'); return; }
-    const name = document.getElementById('fName').value.trim();
-    if(!name){ showToast('ກະລຸນາໃສ່ຊື່ເອກະສານ'); return; }
-    const category = document.getElementById('fCategory').value;
-    const dept = document.getElementById('fDept').value.trim();
-    const desc = document.getElementById('fDesc').value.trim();
-    const tags = document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
-
-    const saveBtn = document.getElementById('formSave');
-    saveBtn.disabled = true;
-    showToast('ກຳລັງບັນທຶກ...');
-    try{
-      if(editingId){
-        const existing = documents.find(d=>d.id===editingId);
-        let file_path = existing ? existing.filePath : null;
-        let ext = existing ? existing.ext : '';
-        let size = existing ? existing.size : 0;
-        if(pendingFiles.length){
-          file_path = await uploadFile(pendingFiles[0].file);
-          ext = pendingFiles[0].ext; size = pendingFiles[0].file.size;
-        }
-        const { error } = await sb.from('documents').update({
-          name, category, dept, description: desc, tags, ext, size, file_path
-        }).eq('id', editingId);
-        if(error) throw error;
-      } else if(pendingFiles.length === 0){
-        const { error } = await sb.from('documents').insert({
-          code: nextCode(), name, category, dept, description: desc, tags
-        });
-        if(error) throw error;
-      } else {
-        for(const pf of pendingFiles){
-          const file_path = await uploadFile(pf.file);
-          const { error } = await sb.from('documents').insert({
-            code: nextCode(),
-            name: pendingFiles.length > 1 ? pf.file.name.replace(/\.[^.]+$/, '') : name,
-            category: pendingFiles.length > 1 ? catFromExt(pf.ext) : category,
-            ext: pf.ext, size: pf.file.size, dept, description: desc, tags, file_path
-          });
-          if(error) throw error;
-        }
-      }
-      await loadDocuments();
-      closeForm();
-      showToast('ບັນທຶກສຳເລັດແລ້ວ');
-    } catch(e){
-      showToast('ຜິດພາດ: ' + e.message);
-    } finally {
-      saveBtn.disabled = false;
-    }
-  }
-
-  /* ---------- View modal ---------- */
-  function renderViewBody(doc, cat, fileUrl, loading){
-    let previewHtml = '';
-    if(loading){
-      previewHtml = `<div class="preview-icon">${doc.filePath ? 'ກຳລັງໂຫລດ...' : '<span class="glyph">'+GLYPH[doc.category]+'</span>ບໍ່ມີໄຟລ໌ແນບ'}</div>`;
-    } else if(doc.category === 'image' && fileUrl){
-      previewHtml = `<img src="${fileUrl}" alt="${escapeHtml(doc.name)}">`;
-    } else {
-      previewHtml = `<div class="preview-icon"><span class="glyph">${GLYPH[doc.category]}</span>${doc.ext ? '.'+doc.ext.toUpperCase() : 'ບໍ່ມີໄຟລ໌ແນບ'}</div>`;
-    }
-    return `
-      <div class="preview-box">${previewHtml}</div>
-      <div class="detail-row"><span class="detail-label">ຊື່ເອກະສານ</span><span class="detail-val">${escapeHtml(doc.name)}</span></div>
-      <div class="detail-row"><span class="detail-label">ລະຫັດເອກະສານ</span><span class="detail-val">${doc.code||'—'}</span></div>
-      <div class="detail-row"><span class="detail-label">ໝວດໝູ່</span><span class="detail-val" style="color:${cat.color}">${cat.label}</span></div>
-      <div class="detail-row"><span class="detail-label">ພະແນກ</span><span class="detail-val">${escapeHtml(doc.dept || '—')}</span></div>
-      <div class="detail-row"><span class="detail-label">ວັນທີບັນທຶກ</span><span class="detail-val">${fmtDate(doc.dateISO)}</span></div>
-      <div class="detail-row"><span class="detail-label">ຂະໜາດໄຟລ໌</span><span class="detail-val">${fmtSize(doc.size)}</span></div>
-      <div class="detail-row"><span class="detail-label">ລາຍລະອຽດ</span><span class="detail-val">${escapeHtml(doc.desc || '—')}</span></div>
-      <div class="detail-row"><span class="detail-label">ແທັກ</span><span class="detail-val"><span class="tag-pills">${doc.tags.length ? doc.tags.map(t=>`<span class="tag-pill">${escapeHtml(t)}</span>`).join('') : '—'}</span></span></div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" id="viewDeleteBtn">ລຶບ</button>
-        <button class="btn btn-ghost" id="viewEditBtn">ແກ້ໄຂ</button>
-        <button class="btn btn-primary" id="viewDownloadBtn" ${(doc.filePath && !loading && fileUrl) ? '' : 'disabled'}>${doc.filePath && loading ? 'ກຳລັງໂຫລດ...' : 'ເປີດ / ດາວໂຫລດ'}</button>
-      </div>`;
-  }
-
-  function wireViewActions(doc, fileUrl){
-    document.getElementById('viewEditBtn').addEventListener('click', ()=> openEditForm(doc.id));
-    document.getElementById('viewDeleteBtn').addEventListener('click', async ()=>{
-      if(!confirm('ຢືນຢັນການລຶບເອກະສານ "'+doc.name+'" ?')) return;
-      try{
-        if(doc.filePath) await sb.storage.from(BUCKET).remove([doc.filePath]);
-        const { error } = await sb.from('documents').delete().eq('id', doc.id);
-        if(error) throw error;
-        closeViewModal();
-        await loadDocuments();
-        showToast('ລຶບເອກະສານແລ້ວ');
-      } catch(e){ showToast('ຜິດພາດ: ' + friendlyStorageError(e)); }
-    });
-    if(fileUrl){
-      document.getElementById('viewDownloadBtn').addEventListener('click', ()=> window.open(fileUrl, '_blank'));
-    }
-  }
-
-  async function openViewModal(id){
-    const doc = documents.find(d=>d.id===id);
-    if(!doc) return;
-    const cat = CATS[doc.category];
-    const body = document.getElementById('viewBody');
-    document.getElementById('viewOverlay').classList.add('show');
-    body.innerHTML = renderViewBody(doc, cat, null, true);
-    wireViewActions(doc, null);
-    if(doc.filePath){
-      const fileUrl = await getSignedUrl(doc.filePath);
-      // ຖ້າຄົນເຮັດຊິ້ນອື່ນຫຼືປິດ modal ໄປແລ້ວລະຫວ່າງລໍຖ້າ, ຢ່າຂຽນທັບຂອງ modal ອື່ນ
-      if(!document.getElementById('viewOverlay').classList.contains('show')) return;
-      body.innerHTML = renderViewBody(doc, cat, fileUrl, false);
-      wireViewActions(doc, fileUrl);
-    }
-  }
-  function closeViewModal(){ document.getElementById('viewOverlay').classList.remove('show'); }
-
-  /* ---------- Export / Import ---------- */
-  function exportData(){
-    const blob = new Blob([JSON.stringify({ documents }, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'ຄັງເອກະສານ-backup-' + new Date().toISOString().slice(0,10) + '.json';
-    a.click(); URL.revokeObjectURL(url);
-    showToast('ສົ່ງອອກຂໍ້ມູນສຳເລັດແລ້ວ');
-  }
-
-  function importData(file){
-    if(!sb){ showToast('ກະລຸນາຕັ້ງຄ່າ Supabase ກ່ອນ'); return; }
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try{
-        const parsed = JSON.parse(reader.result);
-        const list = Array.isArray(parsed.documents) ? parsed.documents : [];
-        showToast('ກຳລັງນຳເຂົ້າ ' + list.length + ' ເອກະສານ...');
-        for(const d of list){
-          let file_path = null;
-          if(d.dataUrl){
-            const blob = await (await fetch(d.dataUrl)).blob();
-            const path = crypto.randomUUID() + '-' + safeName((d.name||'file') + '.' + (d.ext||'bin'));
-            const { error: upErr } = await sb.storage.from(BUCKET).upload(path, blob, { upsert: true });
-            if(!upErr) file_path = path;
-          } else if(d.fileUrl || d.filePath){
-            file_path = d.filePath || null;
-          }
-          await sb.from('documents').insert({
-            code: d.code || null, name: d.name, category: d.category, ext: d.ext,
-            size: d.size || 0, dept: d.dept, description: d.desc, tags: d.tags || [], file_path
-          });
-        }
-        await loadDocuments();
-        showToast('ນຳເຂົ້າສຳເລັດແລ້ວ');
-      } catch(e){ showToast('ບໍ່ສາມາດນຳເຂົ້າໄດ້: ' + e.message); }
-    };
-    reader.readAsText(file);
-  }
-
-  /* ---------- Wire up events ---------- */
-  document.getElementById('addBtn').addEventListener('click', openAddForm);
-  document.getElementById('fabAdd').addEventListener('click', openAddForm);
-  document.getElementById('formClose').addEventListener('click', closeForm);
-  document.getElementById('formCancel').addEventListener('click', closeForm);
-  document.getElementById('formSave').addEventListener('click', saveForm);
-  document.getElementById('viewClose').addEventListener('click', closeViewModal);
-  document.getElementById('formOverlay').addEventListener('click', (e)=>{ if(e.target.id==='formOverlay') closeForm(); });
-  document.getElementById('viewOverlay').addEventListener('click', (e)=>{ if(e.target.id==='viewOverlay') closeViewModal(); });
-  document.getElementById('dropZone').addEventListener('click', ()=> document.getElementById('fileInput').click());
-  document.getElementById('fileInput').addEventListener('change', (e)=> handleFiles(e.target.files));
-  document.getElementById('dropZone').addEventListener('dragover', (e)=> e.preventDefault());
-  document.getElementById('dropZone').addEventListener('drop', (e)=>{ e.preventDefault(); handleFiles(e.dataTransfer.files); });
-  document.getElementById('searchInput').addEventListener('input', (e)=>{ searchTerm = e.target.value; renderGrid(); });
-  document.getElementById('sortSelect').addEventListener('change', (e)=>{ sortMode = e.target.value; renderGrid(); });
-  document.getElementById('exportBtnSide').addEventListener('click', exportData);
-  document.getElementById('importBtnSide').addEventListener('click', ()=> document.getElementById('importFile').click());
-  document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=''; });
-  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ closeForm(); closeViewModal(); } });
-
-  /* ---------- Auth ---------- */
-  let authMode = 'login'; // 'login' | 'register'
-
-  function setAuthMode(mode){
-    authMode = mode;
-    document.getElementById('tabLogin').classList.toggle('active', mode==='login');
-    document.getElementById('tabRegister').classList.toggle('active', mode==='register');
-    document.getElementById('authPass2Wrap').style.display = mode==='register' ? '' : 'none';
-    document.getElementById('authSubmit').textContent = mode==='register' ? 'ສ້າງບັນຊີ' : 'ເຂົ້າສູ່ລະບົບ';
-    document.getElementById('authHint').textContent = mode==='register'
-      ? 'ສ້າງບັນຊີດ້ວຍຊື່ຜູ້ໃຊ້ ແລະ ລະຫັດຜ່ານຂອງທ່ານເອງ.'
-      : 'ຍັງບໍ່ມີບັນຊີ? ກົດ "ລົງທະບຽນ" ດ້ານເທິງເພື່ອສ້າງບັນຊີໃໝ່.';
-    hideAuthErr();
-  }
-  function showAuthErr(msg){
-    const el = document.getElementById('authErr');
-    el.textContent = msg; el.classList.add('show');
-  }
-  function hideAuthErr(){ document.getElementById('authErr').classList.remove('show'); }
-
-  function showApp(session){
-    document.getElementById('authWrap').classList.add('hide');
-    document.getElementById('shellRoot').style.display = '';
-    const uname = emailToUsername(session.user.email);
-    document.getElementById('userBadgeName').textContent = uname;
-    render();
-    loadDocuments();
-  }
-  function showAuth(){
-    document.getElementById('authWrap').classList.remove('hide');
-    document.getElementById('shellRoot').style.display = 'none';
-    documents = [];
-  }
-
-  async function handleAuthSubmit(){
-    if(!sb){ showToast('ກະລຸນາຕັ້ງຄ່າ Supabase ກ່ອນ'); return; }
-    hideAuthErr();
-    const uRaw = document.getElementById('authUser').value.trim();
-    const pass = document.getElementById('authPass').value;
-    if(!uRaw || !pass){ showAuthErr('ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ ແລະ ລະຫັດຜ່ານ'); return; }
-    if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(uRaw)){ showAuthErr('ຊື່ຜູ້ໃຊ້ຕ້ອງມີ 3-30 ໂຕ (a-z, 0-9, _ . -) ບໍ່ມີວັກ'); return; }
-    const email = usernameToEmail(uRaw);
-    const btn = document.getElementById('authSubmit');
-    btn.disabled = true;
-    try{
-      if(authMode === 'register'){
-        const pass2 = document.getElementById('authPass2').value;
-        if(pass.length < 6){ showAuthErr('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 6 ໂຕອັກສອນ'); return; }
-        if(pass !== pass2){ showAuthErr('ລະຫັດຜ່ານທັງສອງບໍ່ກົງກັນ'); return; }
-        const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { username: uRaw } } });
-        if(error) throw error;
-        if(data.session){
-          showApp(data.session);
-        } else {
-          showAuthErr('ສ້າງບັນຊີສຳເລັດ! ຖ້າລະບົບຮ້ອງຂໍການຢືນຢັນອີເມວ, ກະລຸນາປິດ "Confirm email" ໃນ Supabase Auth Settings ແລ້ວລອງເຂົ້າສູ່ລະບົບໃໝ່.');
-          setAuthMode('login');
-        }
-      } else {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-        if(error) throw error;
-        showApp(data.session);
-      }
-    } catch(e){
-      const msg = (e && e.message) || '';
-      if(/invalid login credentials/i.test(msg)) showAuthErr('ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ');
-      else if(/already registered|already exists/i.test(msg)) showAuthErr('ຊື່ຜູ້ໃຊ້ນີ້ຖືກໃຊ້ແລ້ວ ກະລຸນາເລືອກຊື່ອື່ນ');
-      else showAuthErr(msg || 'ເກີດຂໍ້ຜິດພາດ, ກະລຸນາລອງໃໝ່');
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  document.getElementById('tabLogin').addEventListener('click', ()=> setAuthMode('login'));
-  document.getElementById('tabRegister').addEventListener('click', ()=> setAuthMode('register'));
-  document.getElementById('authSubmit').addEventListener('click', handleAuthSubmit);
-  document.getElementById('authPass').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleAuthSubmit(); });
-  document.getElementById('authPass2').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleAuthSubmit(); });
-  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
-    if(sb) await sb.auth.signOut();
-    showAuth();
+function renderChips(){
+  const chipRow = document.getElementById("chipRow");
+  chipRow.innerHTML = "";
+  getCategories().forEach(cat => {
+    const chip = document.createElement("div");
+    chip.className = "chip" + (state.category === cat ? " active" : "");
+    chip.textContent = cat;
+    chip.onclick = () => { state.category = cat; render(); };
+    chipRow.appendChild(chip);
   });
+}
 
-  /* ---------- Init ---------- */
-  if(!isConfigured){
-    document.getElementById('configBanner').classList.add('show');
+function matchesSearch(doc, q){
+  if(!q) return true;
+  q = q.toLowerCase();
+  const hay = [doc.name, doc.code, doc.dept, doc.desc, (doc.tags||[]).join(" ")]
+    .join(" ").toLowerCase();
+  return hay.includes(q);
+}
+
+function render(){
+  renderChips();
+  const grid = document.getElementById("grid");
+  const empty = document.getElementById("emptyState");
+  grid.innerHTML = "";
+
+  let docs = state.data.documents.slice();
+  if(state.category !== "ທັງໝົດ"){
+    docs = docs.filter(d => (d.category || "ອື່ນໆ") === state.category);
   }
-  if(sb){
-    sb.auth.getSession().then(({ data }) => {
-      if(data.session) showApp(data.session);
-      else showAuth();
-    });
-    sb.auth.onAuthStateChange((event, session) => {
-      if(event === 'SIGNED_OUT') showAuth();
-    });
-  } else {
-    // ບໍ່ໄດ້ຕັ້ງຄ່າ Supabase — ສະແດງໜ້າຫຼັກແບບອອບໄລນ໌ໄດ້ (ບໍ່ມີການລ໊ອກອິນ)
-    document.getElementById('authWrap').classList.add('hide');
-    document.getElementById('shellRoot').style.display = '';
-    render();
+  docs = docs.filter(d => matchesSearch(d, state.search));
+  docs.sort((a,b) => new Date(b.dateISO) - new Date(a.dateISO));
+
+  document.getElementById("countBadge").textContent = `${state.data.documents.length} ລາຍການ`;
+
+  if(docs.length === 0){
+    empty.style.display = "block";
+    return;
   }
-})();
+  empty.style.display = "none";
+
+  docs.forEach(doc => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="code">${doc.code || ""}</div>
+        <div class="cat-tab ${catClass(doc.category)}">${(doc.ext || doc.category || "").toUpperCase()}</div>
+      </div>
+      <div class="name">${escapeHtml(doc.name || "(ບໍ່ມີຊື່)")}</div>
+      ${doc.desc ? `<div class="desc">${escapeHtml(doc.desc)}</div>` : ""}
+      ${doc.dept ? `<div class="dept-tag">${escapeHtml(doc.dept)}</div>` : ""}
+      <div class="meta-row">
+        <span>${fmtSize(doc.size || 0)}</span>
+        <span>${fmtDate(doc.dateISO)}</span>
+      </div>
+    `;
+    card.onclick = () => openModal(doc);
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function openModal(doc){
+  const modal = document.getElementById("modalBody");
+  modal.innerHTML = `
+    <button class="m-close" id="mClose">×</button>
+    <div class="m-code">${doc.code || ""}</div>
+    <h2>${escapeHtml(doc.name || "(ບໍ່ມີຊື່)")}</h2>
+    <div class="m-field">
+      <div class="m-label">ປະເພດ</div>
+      <div class="m-value"><span class="cat-tab ${catClass(doc.category)}">${(doc.category||"").toUpperCase()}</span> · ${(doc.ext||"").toUpperCase()}</div>
+    </div>
+    ${doc.dept ? `<div class="m-field"><div class="m-label">ພະແນກ</div><div class="m-value">${escapeHtml(doc.dept)}</div></div>` : ""}
+    ${doc.desc ? `<div class="m-field"><div class="m-label">ລາຍລະອຽດ</div><div class="m-value">${escapeHtml(doc.desc)}</div></div>` : ""}
+    <div class="m-field">
+      <div class="m-label">ຂະໜາດໄຟລ໌</div>
+      <div class="m-value">${fmtSize(doc.size || 0)}</div>
+    </div>
+    <div class="m-field">
+      <div class="m-label">ວັນທີອັບໂຫລດ</div>
+      <div class="m-value">${fmtDate(doc.dateISO)}</div>
+    </div>
+    ${(doc.tags && doc.tags.length) ? `<div class="m-field"><div class="m-label">ແທັກ</div><div class="m-value">${doc.tags.map(escapeHtml).join(", ")}</div></div>` : ""}
+    <div class="m-field">
+      <div class="m-label">ຊື່ໄຟລ໌ໃນລະບົບ</div>
+      <div class="filepath-box">${escapeHtml(doc.filePath || "-")}</div>
+    </div>
+  `;
+  document.getElementById("mClose").onclick = closeModal;
+  document.getElementById("overlay").classList.add("show");
+}
+function closeModal(){
+  document.getElementById("overlay").classList.remove("show");
+}
+document.getElementById("overlay").addEventListener("click", (e) => {
+  if(e.target.id === "overlay") closeModal();
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  state.search = e.target.value;
+  render();
+});
+
+document.getElementById("importBtn").addEventListener("click", () => {
+  document.getElementById("fileInput").click();
+});
+document.getElementById("fileInput").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try{
+      const parsed = JSON.parse(ev.target.result);
+      if(!parsed.documents || !Array.isArray(parsed.documents)){
+        alert("ໄຟລ໌ JSON ບໍ່ຖືກຮູບແບບ (ຕ້ອງມີ documents array)");
+        return;
+      }
+      state.data = parsed;
+      state.category = "ທັງໝົດ";
+      saveData(state.data);
+      render();
+    }catch(err){
+      alert("ບໍ່ສາມາດອ່ານໄຟລ໌ JSON ໄດ້: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state.data, null, 2)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const today = new Date().toISOString().split("T")[0];
+  a.href = url;
+  a.download = `ຄັງເອກະສານ-backup-${today}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+render();
 </script>
 </body>
 </html>
