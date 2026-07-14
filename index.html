@@ -166,6 +166,21 @@
 
   .fab{ display: none; }
 
+  /* ---------- Auth screen ---------- */
+  .auth-wrap{ position: fixed; inset: 0; background: var(--paper); background-image: linear-gradient(var(--hairline) 1px, transparent 1px); background-size: 100% 32px; display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 200; }
+  .auth-wrap.hide{ display: none; }
+  .auth-card{ background: var(--paper-card); border: 1px solid var(--hairline-strong); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(20,28,45,0.18); width: 100%; max-width: 380px; padding: 28px 26px 24px 26px; }
+  .auth-mark{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--brass); text-transform: uppercase; text-align: center; }
+  .auth-title{ font-family: var(--font-display); font-size: 22px; font-weight: 700; text-align: center; margin: 6px 0 20px 0; }
+  .auth-tabs{ display: flex; border: 1px solid var(--hairline-strong); border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; }
+  .auth-tab{ flex: 1; background: var(--paper); border: none; padding: 9px 0; font-size: 13.5px; font-weight: 600; font-family: var(--font-body); color: var(--ink-soft); cursor: pointer; }
+  .auth-tab.active{ background: var(--ink); color: #F4EFE3; }
+  .auth-err{ display: none; background: #FBE8DE; border: 1px solid #C1440E; color: #7A2C0B; padding: 9px 12px; border-radius: var(--radius); font-size: 12.5px; margin-bottom: 14px; line-height: 1.5; }
+  .auth-err.show{ display: block; }
+  .auth-hint{ font-size: 11.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 14px; line-height: 1.5; }
+  .user-badge{ font-size: 12.5px; color: rgba(244,239,227,0.75); padding: 8px 10px; border: 1px solid rgba(244,239,227,0.2); border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .user-badge b{ color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
   @media (max-width: 860px){
     .shell{ grid-template-columns: 1fr; }
     .sidebar{ display: none; }
@@ -185,7 +200,33 @@
 </head>
 <body>
 
-<div class="shell">
+<div class="auth-wrap" id="authWrap">
+  <div class="auth-card">
+    <div class="auth-mark">FILE. № 001</div>
+    <div class="auth-title">ຄັງເອກະສານ</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" type="button">ເຂົ້າສູ່ລະບົບ</button>
+      <button class="auth-tab" id="tabRegister" type="button">ລົງທະບຽນ</button>
+    </div>
+    <div class="auth-err" id="authErr"></div>
+    <div class="field">
+      <label>ຊື່ຜູ້ໃຊ້</label>
+      <input type="text" id="authUser" autocomplete="username" placeholder="ຕົວຢ່າງ: somchai">
+    </div>
+    <div class="field">
+      <label>ລະຫັດຜ່ານ</label>
+      <input type="password" id="authPass" autocomplete="current-password" placeholder="ຢ່າງໜ້ອຍ 6 ໂຕອັກສອນ">
+    </div>
+    <div class="field" id="authPass2Wrap" style="display:none;">
+      <label>ຢືນຢັນລະຫັດຜ່ານ</label>
+      <input type="password" id="authPass2" autocomplete="new-password" placeholder="ພິມລະຫັດຜ່ານອີກຄັ້ງ">
+    </div>
+    <div class="auth-hint" id="authHint">ຍັງບໍ່ມີບັນຊີ? ກົດ "ລົງທະບຽນ" ດ້ານເທິງເພື່ອສ້າງບັນຊີໃໝ່.</div>
+    <button class="btn btn-primary" id="authSubmit" style="width:100%; justify-content:center;">ເຂົ້າສູ່ລະບົບ</button>
+  </div>
+</div>
+
+<div class="shell hide" id="shellRoot" style="display:none;">
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">FILE. № 001</div>
@@ -194,6 +235,7 @@
     </div>
     <ul class="cat-list" id="catList"></ul>
     <div class="sidebar-foot">
+      <div class="user-badge"><b id="userBadgeName">—</b><button class="foot-btn" id="logoutBtn" style="border:none;padding:2px 6px;">ອອກ</button></div>
       <button class="foot-btn" id="exportBtnSide">⬇ ສົ່ງອອກຂໍ້ມູນ (Backup)</button>
       <button class="foot-btn" id="importBtnSide">⬆ ນຳເຂົ້າຈາກ Backup ເກົ່າ</button>
     </div>
@@ -316,6 +358,11 @@
   const isConfigured = !SUPABASE_URL.includes('YOUR_') && !SUPABASE_ANON_KEY.includes('YOUR_');
   const sb = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
+  /* ຊື່ຜູ້ໃຊ້ (username) ຖືກປ່ຽນເປັນອີເມວພາຍໃນ ເພາະ Supabase Auth ຕ້ອງການອີເມວ */
+  const AUTH_EMAIL_DOMAIN = '@docstore.local';
+  function usernameToEmail(u){ return u.trim().toLowerCase().replace(/\s+/g,'') + AUTH_EMAIL_DOMAIN; }
+  function emailToUsername(e){ return (e||'').split('@')[0]; }
+
   const CATS = {
     all:   { label: "ທັງໝົດ",     color: "var(--ink)",     bg: "transparent" },
     word:  { label: "Word",       color: "var(--c-word)",  bg: "var(--c-word-bg)" },
@@ -356,7 +403,12 @@
   }
   function nextCode(){
     const y = new Date().getFullYear();
-    const n = String(documents.length + 1).padStart(4,'0');
+    let maxN = 0;
+    documents.forEach(d => {
+      const m = /^DOC-(\d{4})-(\d+)$/.exec(d.code || '');
+      if(m && Number(m[1]) === y) maxN = Math.max(maxN, Number(m[2]));
+    });
+    const n = String(maxN + 1).padStart(4,'0');
     return "DOC-" + y + "-" + n;
   }
   function escapeHtml(s){
@@ -387,15 +439,26 @@
   async function loadDocuments(){
     if(!sb) return;
     const { data, error } = await sb.from('documents').select('*').order('created_at', { ascending: false });
-    if(error){ showToast('ໂຫລດຂໍ້ມູນຜິດພາດ: ' + error.message); return; }
+    if(error){ showToast('ໂຫລດຂໍ້ມູນຜິດພາດ: ' + friendlyStorageError(error)); return; }
     documents = data.map(rowToDoc);
     render();
+  }
+
+  function friendlyStorageError(error){
+    const msg = (error && error.message) || '';
+    if(/bucket not found/i.test(msg)){
+      return 'ບໍ່ພົບ Storage Bucket ຊື່ "' + BUCKET + '" — ກະລຸນາເປີດ Supabase Dashboard → Storage ແລ້ວສ້າງ Bucket ຊື່ "' + BUCKET + '" (ຫຼືແລ່ນ SQL ໃນເອກະສານຄູ່ມືການຕິດຕັ້ງ).';
+    }
+    if(/row-level security|RLS|permission denied|policy/i.test(msg)){
+      return 'ບໍ່ມີສິດອະນຸຍາດ (RLS Policy) — ກະລຸນາຕັ້ງຄ່າ Policy ສຳລັບຕາຕະລາງ/Bucket ຕາມຄູ່ມືການຕິດຕັ້ງ.';
+    }
+    return msg || 'ເກີດຂໍ້ຜິດພາດທີ່ບໍ່ຮູ້ຈັກ';
   }
 
   async function uploadFile(file){
     const path = crypto.randomUUID() + '-' + safeName(file.name);
     const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: true });
-    if(error) throw error;
+    if(error) throw new Error(friendlyStorageError(error));
     return path;
   }
 
@@ -649,7 +712,7 @@
         closeViewModal();
         await loadDocuments();
         showToast('ລຶບເອກະສານແລ້ວ');
-      } catch(e){ showToast('ຜິດພາດ: ' + e.message); }
+      } catch(e){ showToast('ຜິດພາດ: ' + friendlyStorageError(e)); }
     });
     if(doc.fileUrl){
       document.getElementById('viewDownloadBtn').addEventListener('click', ()=> window.open(doc.fileUrl, '_blank'));
@@ -717,12 +780,106 @@
   document.getElementById('importFile').addEventListener('change', (e)=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=''; });
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape'){ closeForm(); closeViewModal(); } });
 
+  /* ---------- Auth ---------- */
+  let authMode = 'login'; // 'login' | 'register'
+
+  function setAuthMode(mode){
+    authMode = mode;
+    document.getElementById('tabLogin').classList.toggle('active', mode==='login');
+    document.getElementById('tabRegister').classList.toggle('active', mode==='register');
+    document.getElementById('authPass2Wrap').style.display = mode==='register' ? '' : 'none';
+    document.getElementById('authSubmit').textContent = mode==='register' ? 'ສ້າງບັນຊີ' : 'ເຂົ້າສູ່ລະບົບ';
+    document.getElementById('authHint').textContent = mode==='register'
+      ? 'ສ້າງບັນຊີດ້ວຍຊື່ຜູ້ໃຊ້ ແລະ ລະຫັດຜ່ານຂອງທ່ານເອງ.'
+      : 'ຍັງບໍ່ມີບັນຊີ? ກົດ "ລົງທະບຽນ" ດ້ານເທິງເພື່ອສ້າງບັນຊີໃໝ່.';
+    hideAuthErr();
+  }
+  function showAuthErr(msg){
+    const el = document.getElementById('authErr');
+    el.textContent = msg; el.classList.add('show');
+  }
+  function hideAuthErr(){ document.getElementById('authErr').classList.remove('show'); }
+
+  function showApp(session){
+    document.getElementById('authWrap').classList.add('hide');
+    document.getElementById('shellRoot').style.display = '';
+    const uname = emailToUsername(session.user.email);
+    document.getElementById('userBadgeName').textContent = uname;
+    render();
+    loadDocuments();
+  }
+  function showAuth(){
+    document.getElementById('authWrap').classList.remove('hide');
+    document.getElementById('shellRoot').style.display = 'none';
+    documents = [];
+  }
+
+  async function handleAuthSubmit(){
+    if(!sb){ showToast('ກະລຸນາຕັ້ງຄ່າ Supabase ກ່ອນ'); return; }
+    hideAuthErr();
+    const uRaw = document.getElementById('authUser').value.trim();
+    const pass = document.getElementById('authPass').value;
+    if(!uRaw || !pass){ showAuthErr('ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້ ແລະ ລະຫັດຜ່ານ'); return; }
+    if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(uRaw)){ showAuthErr('ຊື່ຜູ້ໃຊ້ຕ້ອງມີ 3-30 ໂຕ (a-z, 0-9, _ . -) ບໍ່ມີວັກ'); return; }
+    const email = usernameToEmail(uRaw);
+    const btn = document.getElementById('authSubmit');
+    btn.disabled = true;
+    try{
+      if(authMode === 'register'){
+        const pass2 = document.getElementById('authPass2').value;
+        if(pass.length < 6){ showAuthErr('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 6 ໂຕອັກສອນ'); return; }
+        if(pass !== pass2){ showAuthErr('ລະຫັດຜ່ານທັງສອງບໍ່ກົງກັນ'); return; }
+        const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { username: uRaw } } });
+        if(error) throw error;
+        if(data.session){
+          showApp(data.session);
+        } else {
+          showAuthErr('ສ້າງບັນຊີສຳເລັດ! ຖ້າລະບົບຮ້ອງຂໍການຢືນຢັນອີເມວ, ກະລຸນາປິດ "Confirm email" ໃນ Supabase Auth Settings ແລ້ວລອງເຂົ້າສູ່ລະບົບໃໝ່.');
+          setAuthMode('login');
+        }
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+        if(error) throw error;
+        showApp(data.session);
+      }
+    } catch(e){
+      const msg = (e && e.message) || '';
+      if(/invalid login credentials/i.test(msg)) showAuthErr('ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ');
+      else if(/already registered|already exists/i.test(msg)) showAuthErr('ຊື່ຜູ້ໃຊ້ນີ້ຖືກໃຊ້ແລ້ວ ກະລຸນາເລືອກຊື່ອື່ນ');
+      else showAuthErr(msg || 'ເກີດຂໍ້ຜິດພາດ, ກະລຸນາລອງໃໝ່');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('tabLogin').addEventListener('click', ()=> setAuthMode('login'));
+  document.getElementById('tabRegister').addEventListener('click', ()=> setAuthMode('register'));
+  document.getElementById('authSubmit').addEventListener('click', handleAuthSubmit);
+  document.getElementById('authPass').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleAuthSubmit(); });
+  document.getElementById('authPass2').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleAuthSubmit(); });
+  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+    if(sb) await sb.auth.signOut();
+    showAuth();
+  });
+
   /* ---------- Init ---------- */
   if(!isConfigured){
     document.getElementById('configBanner').classList.add('show');
   }
-  render();
-  if(sb) loadDocuments();
+  if(sb){
+    sb.auth.getSession().then(({ data }) => {
+      if(data.session) showApp(data.session);
+      else showAuth();
+    });
+    sb.auth.onAuthStateChange((event, session) => {
+      if(event === 'SIGNED_OUT') showAuth();
+    });
+  } else {
+    // ບໍ່ໄດ້ຕັ້ງຄ່າ Supabase — ສະແດງໜ້າຫຼັກແບບອອບໄລນ໌ໄດ້ (ບໍ່ມີການລ໊ອກອິນ)
+    document.getElementById('authWrap').classList.add('hide');
+    document.getElementById('shellRoot').style.display = '';
+    render();
+  }
 })();
 </script>
 </body>
