@@ -424,16 +424,20 @@
   function safeName(name){ return name.replace(/[^a-zA-Z0-9._-]/g, '_'); }
 
   function rowToDoc(row){
-    let fileUrl = null;
-    if(row.file_path && sb){
-      fileUrl = sb.storage.from(BUCKET).getPublicUrl(row.file_path).data.publicUrl;
-    }
     return {
       id: row.id, code: row.code, name: row.name, category: row.category,
       ext: row.ext, size: row.size || 0, dateISO: row.created_at,
       dept: row.dept, desc: row.description, tags: row.tags || [],
-      filePath: row.file_path, fileUrl
+      filePath: row.file_path
     };
+  }
+
+  /* Bucket ຖືກຕັ້ງເປັນ private — ຕ້ອງສ້າງ Signed URL (ໝົດອາຍຸໃນ 1 ຊົ່ວໂມງ) ທຸກຄັ້ງທີ່ຈະເປີດ/ສະແດງໄຟລ໌ ແລະ ຕ້ອງ login ຢູ່ຈຶ່ງສ້າງໄດ້ */
+  async function getSignedUrl(filePath){
+    if(!filePath || !sb) return null;
+    const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(filePath, 3600);
+    if(error) return null;
+    return data.signedUrl;
   }
 
   async function loadDocuments(){
@@ -674,18 +678,16 @@
   }
 
   /* ---------- View modal ---------- */
-  function openViewModal(id){
-    const doc = documents.find(d=>d.id===id);
-    if(!doc) return;
-    const cat = CATS[doc.category];
+  function renderViewBody(doc, cat, fileUrl, loading){
     let previewHtml = '';
-    if(doc.category === 'image' && doc.fileUrl){
-      previewHtml = `<img src="${doc.fileUrl}" alt="${escapeHtml(doc.name)}">`;
+    if(loading){
+      previewHtml = `<div class="preview-icon">${doc.filePath ? 'ກຳລັງໂຫລດ...' : '<span class="glyph">'+GLYPH[doc.category]+'</span>ບໍ່ມີໄຟລ໌ແນບ'}</div>`;
+    } else if(doc.category === 'image' && fileUrl){
+      previewHtml = `<img src="${fileUrl}" alt="${escapeHtml(doc.name)}">`;
     } else {
       previewHtml = `<div class="preview-icon"><span class="glyph">${GLYPH[doc.category]}</span>${doc.ext ? '.'+doc.ext.toUpperCase() : 'ບໍ່ມີໄຟລ໌ແນບ'}</div>`;
     }
-    const body = document.getElementById('viewBody');
-    body.innerHTML = `
+    return `
       <div class="preview-box">${previewHtml}</div>
       <div class="detail-row"><span class="detail-label">ຊື່ເອກະສານ</span><span class="detail-val">${escapeHtml(doc.name)}</span></div>
       <div class="detail-row"><span class="detail-label">ລະຫັດເອກະສານ</span><span class="detail-val">${doc.code||'—'}</span></div>
@@ -698,10 +700,11 @@
       <div class="modal-actions">
         <button class="btn btn-ghost" id="viewDeleteBtn">ລຶບ</button>
         <button class="btn btn-ghost" id="viewEditBtn">ແກ້ໄຂ</button>
-        <button class="btn btn-primary" id="viewDownloadBtn" ${doc.fileUrl ? '' : 'disabled'}>ເປີດ / ດາວໂຫລດ</button>
+        <button class="btn btn-primary" id="viewDownloadBtn" ${(doc.filePath && !loading && fileUrl) ? '' : 'disabled'}>${doc.filePath && loading ? 'ກຳລັງໂຫລດ...' : 'ເປີດ / ດາວໂຫລດ'}</button>
       </div>`;
-    document.getElementById('viewOverlay').classList.add('show');
+  }
 
+  function wireViewActions(doc, fileUrl){
     document.getElementById('viewEditBtn').addEventListener('click', ()=> openEditForm(doc.id));
     document.getElementById('viewDeleteBtn').addEventListener('click', async ()=>{
       if(!confirm('ຢືນຢັນການລຶບເອກະສານ "'+doc.name+'" ?')) return;
@@ -714,8 +717,25 @@
         showToast('ລຶບເອກະສານແລ້ວ');
       } catch(e){ showToast('ຜິດພາດ: ' + friendlyStorageError(e)); }
     });
-    if(doc.fileUrl){
-      document.getElementById('viewDownloadBtn').addEventListener('click', ()=> window.open(doc.fileUrl, '_blank'));
+    if(fileUrl){
+      document.getElementById('viewDownloadBtn').addEventListener('click', ()=> window.open(fileUrl, '_blank'));
+    }
+  }
+
+  async function openViewModal(id){
+    const doc = documents.find(d=>d.id===id);
+    if(!doc) return;
+    const cat = CATS[doc.category];
+    const body = document.getElementById('viewBody');
+    document.getElementById('viewOverlay').classList.add('show');
+    body.innerHTML = renderViewBody(doc, cat, null, true);
+    wireViewActions(doc, null);
+    if(doc.filePath){
+      const fileUrl = await getSignedUrl(doc.filePath);
+      // ຖ້າຄົນເຮັດຊິ້ນອື່ນຫຼືປິດ modal ໄປແລ້ວລະຫວ່າງລໍຖ້າ, ຢ່າຂຽນທັບຂອງ modal ອື່ນ
+      if(!document.getElementById('viewOverlay').classList.contains('show')) return;
+      body.innerHTML = renderViewBody(doc, cat, fileUrl, false);
+      wireViewActions(doc, fileUrl);
     }
   }
   function closeViewModal(){ document.getElementById('viewOverlay').classList.remove('show'); }
